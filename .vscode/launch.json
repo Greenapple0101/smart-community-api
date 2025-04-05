@@ -1,0 +1,12 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "java",
+      "name": "Launch SmartCommunityApiApplication",
+      "request": "launch",
+      "mainClass": "com.example.smart_community_api.SmartCommunityApiApplication",
+      "projectName": "smart_community_api"
+    }
+  ]
+}
