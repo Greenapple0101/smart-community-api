@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Smart Community Prototype</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    section { margin-bottom: 40px; }
+    table { border-collapse: collapse; width: 100%; margin-top: 10px; }
+    th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+    th { background: #f4f4f4; }
+    input, button, select, textarea { margin: 5px 0; padding: 6px; width: 100%; max-width: 400px; }
+    button { cursor: pointer; }
+  </style>
+</head>
+<body>
+  <h1>Smart Community Prototype</h1>
+
+  <section>
+    <h2>Student Profile</h2>
+    <input type="number" id="profileId" placeholder="Student ID (e.g., 1)" />
+    <button onclick="loadProfile()">Load Profile</button>
+    <pre id="profileResult"></pre>
+  </section>
+
+  <section>
+    <h2>Homeworks</n2>
+    <button onclick="loadHomeworks()">Load Homeworks</button>
+    <pre id="homeworksResult"></pre>
+    <h3>Create Homework</h3>
+    <input type="text" id="hwTitle" placeholder="Title" />
+    <textarea id="hwDesc" placeholder="Description"></textarea>
+    <input type="date" id="hwDue" />
+    <button onclick="createHomework()">Create</button>
+    <pre id="createHwResult"></pre>
+  </section>
+
+  <section>
+    <h2>Exam Scores</h2>
+    <button onclick="loadScores()">Load Exam Scores</button>
+    <pre id="scoresResult"></pre>
+    <h3>Create Exam Score</h3>
+    <input type="text" id="exSubj" placeholder="Subject" />
+    <input type="number" id="exScore" placeholder="Score" min="0" max="100" />
+    <input type="date" id="exDate" />
+    <button onclick="createScore()">Create</button>
+    <pre id="createScoreResult"></pre>
+  </section>
+
+  <section>
+    <h2>Weaknesses</h2>
+    <button onclick="loadWeaknesses()">Load Weaknesses</button>
+    <pre id="weakResult"></pre>
+    <h3>Create Weakness</h3>
+    <textarea id="wkDesc" placeholder="Description"></textarea>
+    <input type="number" id="wkPrio" placeholder="Priority (1-5)" min="1" max="5" />
+    <button onclick="createWeakness()">Create</button>
+    <pre id="createWkResult"></pre>
+  </section>
+
+  <section>
+    <h2>Questions</h2>
+    <button onclick="loadQuestions()">Load Questions</button>
+    <pre id="qResult"></pre>
+    <h3>Ask Question</h3>
+    <input type="text" id="qTitle" placeholder="Title" />
+    <textarea id="qContent" placeholder="Content"></textarea>
+    <button onclick="askQuestion()">Ask</button>
+    <pre id="askQResult"></pre>
+  </section>
+
+  <script>
+    const apiBase = '/api';
+    function getId() {
+      return parseInt(document.getElementById('profileId').value) || 1;
+    }
+
+    async function loadProfile() {
+      const id = getId();
+      const res = await fetch(`${apiBase}/users/${id}`);
+      document.getElementById('profileResult').textContent = await res.text();
+    }
+
+    async function loadHomeworks() {
+      const id = getId();
+      const res = await fetch(`${apiBase}/homeworks?studentId=${id}`);
+      document.getElementById('homeworksResult').textContent = await res.text();
+    }
+    async function createHomework() {
+      const id = getId();
+      const body = { title: document.getElementById('hwTitle').value,
+                     description: document.getElementById('hwDesc').value,
+                     dueDate: document.getElementById('hwDue').value,
+                     student: { id } };
+      const res = await fetch(`${apiBase}/homeworks`, {
+        method: 'POST', headers: { 'Content-Type':'application/json' }, body: JSON.stringify(body)
+      });
+      document.getElementById('createHwResult').textContent = await res.text();
+    }
+
+    async function loadScores() {
+      const id = getId();
+      const res = await fetch(`${apiBase}/examscores?studentId=${id}`);
+      document.getElementById('scoresResult').textContent = await res.text();
+    }
+    async function createScore() {
+      const id = getId();
+      const body = { subject: document.getElementById('exSubj').value,
+                     score: parseInt(document.getElementById('exScore').value),
+                     examDate: document.getElementById('exDate').value,
+                     student: { id } };
+      const res = await fetch(`${apiBase}/examscores`, {
+        method: 'POST', headers: { 'Content-Type':'application/json' }, body: JSON.stringify(body)
+      });
+      document.getElementById('createScoreResult').textContent = await res.text();
+    }
+
+    async function loadWeaknesses() {
+      const id = getId();
+      const res = await fetch(`${apiBase}/weaknesses?studentId=${id}`);
+      document.getElementById('weakResult').textContent = await res.text();
+    }
+    async function createWeakness() {
+      const id = getId();
+      const body = { description: document.getElementById('wkDesc').value,
+                     priority: parseInt(document.getElementById('wkPrio').value),
+                     student: { id } };
+      const res = await fetch(`${apiBase}/weaknesses`, {
+        method: 'POST', headers: { 'Content-Type':'application/json' }, body: JSON.stringify(body)
+      });
+      document.getElementById('createWkResult').textContent = await res.text();
+    }
+
+    async function loadQuestions() {
+      const id = getId();
+      const res = await fetch(`${apiBase}/questions?studentId=${id}`);
+      document.getElementById('qResult').textContent = await res.text();
+    }
+    async function askQuestion() {
+      const id = getId();
+      const body = { title: document.getElementById('qTitle').value,
+                     content: document.getElementById('qContent').value,
+                     student: { id } };
+      const res = await fetch(`${apiBase}/questions`, {
+        method: 'POST', headers: { 'Content-Type':'application/json' }, body: JSON.stringify(body)
+      });
+      document.getElementById('askQResult').textContent = await res.text();
+    }
+  </script>
+</body>
+</html>
